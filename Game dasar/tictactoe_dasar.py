@@ -1,98 +1,86 @@
-import itertools
+import random
+try:
+    raw_input()
+except NameError:
+    raw_input = input
 
-def win(current_game):
+WIN_COMBINATIONS = [(1, 2, 3),
+                    (4, 5, 6),
+                    (7, 8, 9),
+                    (1, 4, 7),
+                    (2, 5, 8),
+                    (3, 6, 9),
+                    (1, 5, 9),
+                    (3, 5, 7)]
 
-    def all_same(l):
-        if l.count(l[0]) == len(l) and l[0] != 0:
-            return True
-        else:
-            return False
+def display_board(board):
+    print('''   |   |  
+ {} | {} | {}
+   |   |
+-----------
+   |   |
+ {} | {} | {} 
+   |   |
+-----------
+   |   |
+ {} | {} | {}
+   |   |'''.format(*board[1:10]))
 
-    # horizontal
-    for row in game:
-        print(row)
-        if all_same(row):
-            print(f"Pemain {row[0]} adalah pemenangnya karena sudah terpenuhi secara horizontal!")
-            return True
+def player_input():
+    marker = ' '
+    while not (marker == 'X' or marker == 'O'):
+        marker = raw_input('Player 1, Choose O or X to play!').upper()
+    if marker == 'X':
+        return {'Player 1': 'X', 'Player 2': 'O'}
+    else:
+        return {'Player 2': 'X', 'Player 1': 'O'}
 
-    # vertical
-    for col in range(len(game[0])):
-        check = []
-        for row in game:
-            check.append(row[col])
-        if all_same(check):
-            print(f"Pemain {check[0]} adalah pemenangnya karena sudah terpenuhi secara vertikal!")
-            return True
+def win_check (board):
+    return any(board[a] != ' ' and board[a] == board[b] == board[c] for a, b, c in WIN_COMBINATIONS)
 
-    # / diagonal
-    diags = []
-    for idx, reverse_idx in enumerate(reversed(range(len(game)))):
-        diags.append(game[idx][reverse_idx])
+def choose_first(players):
+    random_player = 'Player {}'.format(random.randint(1, 2))
+    return random_player, players[random_player]
 
-    if all_same(diags):
-        print(f"Pemain {diags[0]} adalah pemenangnya karena sudah terpenuhi secara Diagonal (/)")
-        return True
+def full_check (board):
+    return all(b != ' ' for b in board)
 
-    # \ diagonal
-    diags = []
-    for ix in range(len(game)):
-        diags.append(game[ix][ix])
+def player_choice(board):
+    while True:
+        try:
+            position = int(raw_input('Choose number input 1-9'))
+            if position in range(1, 9) and board[position] == ' ':
+                return position
+        except ValueError:
+            pass
 
-    if all_same(diags):
-        print(f"Pemain {diags[0]} adalah pemenangnya karena sudah terpenuhi secara Diagonal (\\)")
-        return True
+def replay():
+    return raw_input('Do you want to play again? Enter Yes or No: ').lower().startswith('y')
 
-    return False
+def ttt():
+    board = [' ' for _ in range(10)]
+    players = player_input()
+    name, player_marker = choose_first(players)
+    print('{} with marker {} will go first.'.format(name, player_marker))
+    while True:
+        position = player_choice(board)
+        board[position] = player_marker
+        display_board(board)
+        if win_check(board):
+            print('Congratulations {}! You have won the game!'.format(name))
+            break
 
+        if full_check(board):
+            print('Congratulations {} and {}! You have a tie!'.format(players.keys()))
+            break
 
-def game_board(game_map, player=0, row=0, column=0, just_display=False):
+        name = 'Player 1' if name == 'Player 2' else 'Player 2'
+        player_marker = players[name]
+        print(name, player_marker)
 
-    try:
-        if game_map[row][column] != 0:
-            print("Ruang ini sudah terisi, silahkan coba yang lain!")
-            return False
-
-        print("   "+"  ".join([str(i) for i in range(len(game_map))]))
-        if not just_display:
-            game_map[row][column] = player
-        for count, row in enumerate(game_map):
-            print(count, row)
-        return game_map
-    except IndexError:
-        print("Apakah kamu bermain di kolom atau baris diluar batas diantara 0,1 atau 2? (IndexError)")
-        return False
-    except Exception as e:
-        print(str(e))
-        return False
-
-
-play = True
-players = [1, 2]
-while play:
-    game = [[0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]]
-
-    game_won = False
-    player_cycle = itertools.cycle([1, 2])
-    game_board(game, just_display=True)
-    while not game_won:
-        current_player = next(player_cycle)
-        played = False
-        while not played:
-            print(f"Pemain: {current_player}")
-            column_choice = int(input("Kolom mana? "))
-            row_choice = int(input("Baris mana? "))
-            played = game_board(game, player=current_player, row=row_choice, column=column_choice)
-
-        if win(game):
-            game_won = True
-            again = input("Game selesai, apakah anda ingin bermain lagi? (y/n) ")
-            if again.lower() == "y":
-                print("Memulai lagiiiii.....!")
-            elif again.lower() == "n":
-                print("Hey! \n sampai jumpa di lain hari \n untuk kita bertemu lagi...........")
-                play = False
-            else:
-                print("Bukan jawaban yang benar, tapi.... sampai bertemu dilain kesempatan yaaaaa.........")
-                play = False
+if __name__ == '__main__':
+    print('Welcome to Tic Tac Toe Game!')
+    while True:
+        ttt()
+        if not replay():
+            break
