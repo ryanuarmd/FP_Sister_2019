@@ -48,8 +48,8 @@ def full_check (board):
 def player_choice(board):
     while True:
         try:
-            position = int(raw_input('Silahkan masukkan angka 1-9'))
-            if position in range(1, 9) and board[position] == ' ':
+            position = int(raw_input('Silahkan masukkan angka 1-9 '))
+            if position in range(1, 10) and board[position] == ' ':
                 return position
         except ValueError:
             pass
