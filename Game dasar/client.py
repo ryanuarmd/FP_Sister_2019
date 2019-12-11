@@ -8,5 +8,5 @@ def get_fileserver_object(instance_name):
 
 
 if __name__ == '__main__':
-    connection = get_fileserver_object("tictactoedasar")
+    connection = get_fileserver_object("hostname")
     print(connection.hello())
