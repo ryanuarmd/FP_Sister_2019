@@ -14,6 +14,5 @@ def start_with_ns():
     ns.register("tictactoedasar", tictactoedasar)
     daemon.requestLoop()
 
-
 if __name__ == '__main__':
     start_with_ns()
