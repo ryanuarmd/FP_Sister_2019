@@ -2,11 +2,11 @@ import Pyro4
 
 
 def get_fileserver_object(instance_name):
-    uri = "PYRONAME:{}@localhost:7777" . format(instance_name)
+    uri = "PYRONAME:{}@127.0.0.1:7777" . format(instance_name)
     fserver = Pyro4.Proxy(uri)
     return fserver
 
 
 if __name__ == '__main__':
-    connection = get_fileserver_object("hostname")
+    connection = get_fileserver_object("tictactoedasar")
     print(connection.hello())

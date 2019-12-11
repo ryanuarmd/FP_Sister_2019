@@ -9,9 +9,10 @@ def start_with_ns():
     _host = "127.0.0.1"
     daemon = Pyro4.Daemon(host=_host)
     ns = Pyro4.locateNS(_host,7777)
-    x_tictactoedasar = Pyro4.expose(tictactoedasar)
-    uri_tictactoedasar = daemon.register(x_tictactoedasar)
-    ns.register("tictactoedasar", tictactoedasar)
+    x_ttt = Pyro4.expose(ttt)
+    uri_ttt = daemon.register(x_ttt)
+    print("URI Tic Tac Toe : ", uri_ttt)
+    ns.register("tictactoe", uri_ttt)
     daemon.requestLoop()
 
 
